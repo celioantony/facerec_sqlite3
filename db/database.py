@@ -39,6 +39,7 @@ def load_database_in_memory(conn_source, conn_memory):
 
 def migrate(conn=None):
     
+    print(' ')
     if conn is not None:
         # create person table
         create_table(conn, person_table)

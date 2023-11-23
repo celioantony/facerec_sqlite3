@@ -13,8 +13,11 @@ logger = logging.getLogger(__name__)
 
 class VideoStreamGUI:
 
-    def __init__(self, stream, queue_recog, queue_stream, capframe_time, name='WebcamVideoStream'):
+    def __init__(self, stream, processes, queue_recog, queue_stream, capframe_time, name='WebcamVideoStream'):
         self.stream = stream
+        
+        # processes to recognition
+        self.processes = processes
         
         # time of capture frame to recognition
         self.capframe_time = capframe_time
@@ -122,6 +125,7 @@ class VideoStreamGUI:
         self.stream.stop()
         self.stopped_stream.set()
         self.stopped_capframe.set()
+        [process.terminate() for process in self.processes]
         self.root.destroy()
 
     def display(self):
@@ -171,7 +175,8 @@ class VideoStreamGUI:
             try:
                 self.people = self.queue_stream.get()
             finally:
-                self.queue_stream.task_done()
+                pass
+                # self.queue_stream.task_done()
 
     # def video_loop(self):
     #     try:

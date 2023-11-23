@@ -1,3 +1,4 @@
+import logging
 import queue
 import numpy as np
 import face_recognition
@@ -7,6 +8,8 @@ from settings import known_faces_person_ids, \
     known_faces_encodings, \
     known_person
 
+
+logger = logging.getLogger(__name__)
 
 def face_ident(unknown_face):
 
@@ -72,14 +75,16 @@ class RecognitionWorker(Thread):
                     self.queue_recog.task_done()
                     
                     
-def multiprocessor_recog(queue_recog):
+def multiprocessor_recog(queue_recog, queue_stream):
     while True:
-        try:
+        if not queue_recog.empty():
             frame = queue_recog.get()
-            print(' - task - ', current_process().name)
-        except queue.Empty:
-            break
-        else:
-            print(' - task done - ')
-    
-    return True
+            rgb_frame = np.ascontiguousarray(frame[:, :, ::-1])        
+            try:
+                ident = face_ident(rgb_frame)
+                queue_stream.put(ident)
+                # logger.info(' - Process executed by - {} '.format(current_process().name))
+            finally:
+                # logger.info(' - Porcess {} done - '.format(current_process().name))
+                queue_recog.task_done()
+  

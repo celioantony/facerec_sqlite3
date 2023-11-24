@@ -10,7 +10,7 @@ directories with the names of the faces in the respective structure.
 Structure of folders:
 
     datatraining /
-        celio_soares /
+        celio_antony /
             face01.png
             face02.png
             face03.png

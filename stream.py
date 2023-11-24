@@ -116,7 +116,7 @@ class VideoStreamGUI:
                 self.display()
 
         except RuntimeError:
-            print('[INFO] COUNGHT A RuntimeError')
+            print('[INFO] COUNGHT A RuntimeError') 
 
     def read(self):
         return self.frame
@@ -166,9 +166,13 @@ class VideoStreamGUI:
                 #             font, 0.5, (255, 255, 255), 1)
 
     def capture_frame(self, time):
-        while not self.stopped_capframe.wait(time) \
-                and not self.stopped_capframe.is_set():
-            self.queue_recog.put(self.read())
+        if time > 0:
+            while not self.stopped_capframe.wait(time) \
+                    and not self.stopped_capframe.is_set():
+                self.queue_recog.put(self.read())
+        else:
+            while not self.stopped_capframe.is_set():
+                self.queue_recog.put(self.read())
 
     def recognition_worker(self):
         while True:
